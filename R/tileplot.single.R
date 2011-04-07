@@ -1,5 +1,5 @@
 `tileplot.single` <-
-function(genesonchip, array1data, annotationslist, allsequences, cutoff, outputfile, graphdirectory, outputtable)
+function(genesonchip, array1data, annotationslist, cutoff, outputfile, graphdirectory, outputtable, array1name = "Array 1")
 {
 	
 #The cluster file is the CD-HIT output piped through a python script to make each line a cluster (a list of identifiers)
@@ -27,7 +27,7 @@ setwd(graphdirectory)
 annotations = scan(file=annotationslist, what="list", sep="\n")
 
 #The sequences should each cover a single line and come in the same order as the genes file. 
-sequences = read.table(file=allsequences)
+#sequences = read.table(file=allsequences)
 
 #This is the cutoff hybridization intensity value used for calculating the bright probe fraction.
 #cutoff = 150
@@ -81,7 +81,7 @@ stop_chunk_blast1 = matrix(nrow=dim(genes)[1],ncol=max(probenums))
 #stop_chunk_blast2 = matrix(nrow=dim(genes)[1],ncol=max(probenums))
 
 #...so that this sequence_chunks matrix can be filled based on it
-sequence_chunks1 = matrix(nrow=dim(genes)[1],ncol=max(probenums))
+#sequence_chunks1 = matrix(nrow=dim(genes)[1],ncol=max(probenums))
 #sequence_chunks2 = matrix(nrow=dim(genes)[1],ncol=max(probenums))
 
 
@@ -155,17 +155,17 @@ stop_chunk_blast1[i, chunk_coord] = length(gene)*30
 }			
 
 #This fills out the sequence_chunks matrix, a matrix whose first column is gene identifiers, followed by the actual chunks of gene hybridization that have caused brightness.
-sequence_chunks1[i,1] = genes[i,]
-p=2
-for(j in 1:length(gene))
-	{
-	if(is.na(start_chunk_blast1[i,j]))
-	{next} else
-	{
-	sequence_chunks1[i,p] = substr(sequences[grep(genes[i,],sequences[,1]),2],start_chunk_blast1[i,j],stop_chunk_blast1[i,j])
-	p = p+1					
-	}	
-		}			
+#sequence_chunks1[i,1] = genes[i,]
+#p=2
+#for(j in 1:length(gene))
+#	{
+#	if(is.na(start_chunk_blast1[i,j]))
+#	{next} else
+#	{
+#	sequence_chunks1[i,p] = substr(sequences[grep(genes[i,],sequences[,1]),2],start_chunk_blast1[i,j],stop_chunk_blast1[i,j])
+#	p = p+1					
+#	}	
+#		}			
 	}
 
 #This next bit is vital - it takes the length of every chunk, and squares it! This is where the magic happens - chunks that are just one probe long will remain as one, but those that are 2 or greater will incraese in a non-linear fashion.
@@ -208,7 +208,7 @@ mean_probe_intensity1 = vector()
 
 #The rest is just data output, first of all plotting all the hybridization patterns and chunk scores to give an idea of the diversity in the sample.
 cat("\\documentclass{article}\n\\usepackage{graphicx}\n\\usepackage{epstopdf}\n\\usepackage{color}\n\\usepackage{fullpage}\n\\begin{document}\n\\ttfamily", file = outputfile)
-cat("Gene\tAnnotation\tMean Probe Intensity 1\tMedian Probe Intensity 1\tBright Segment Length Dependent Score 1\tBright Probe Fraction 1\tMean Bright Probe Intensity 1\tMedian Bright Probe Intensity 1\tMean Probe Intensity 2\tMedian Probe Intensity 2\tBright Segment Length Dependent Score 2\tBright Probe Fraction 2\tMean Bright Probe Intensity 2\tMedian Bright Probe Intensity 2\n", file = outputtable)
+cat("Gene\tAnnotation\tMean Probe Intensity", array1name, "\tMedian Probe Intensity", array1name, "\tBright Segment Length Dependent Score", array1name, "\tBright Probe Fraction", array1name, "\tMean Bright Probe Intensity", array1name, "\tMedian Bright Probe Intensity", array1name, "\n", file = outputtable)
 
 postscript(file = paste(graphdirectory,"bright_probe_fraction_plot.eps",sep="/"), width=9, height=5)
 bpf_matrix = matrix(nrow =length(bright_probe_fraction1), ncol=1)
@@ -268,7 +268,7 @@ cat(paste("\n\\includegraphics[angle=-90,width=15cm]{",i,".eps}\\\\",sep=""), fi
 
 cat("\\begin{tabular}{| l | l |}\n", file = outputfile, append=TRUE)
 cat("\\hline\n", file = outputfile, append=TRUE)
-cat(paste(genes[order(chunk_score1, decreasing=TRUE)[i],]," & Array 1 \\\\ \\hline\n"), file = outputfile, append=TRUE)
+cat(paste(genes[order(chunk_score1, decreasing=TRUE)[i],]," & ", array1name, " \\\\ \\hline\n"), file = outputfile, append=TRUE)
 cat(paste("Mean Probe Intensity: &",round(mean(temp_matrix[,1]), digits=2),"\\\\\n"), file = outputfile, append=TRUE) 
 cat(paste("Median Probe Intensity: &",round(median(temp_matrix[,1]), digits=2),"\\\\\n"), file = outputfile, append=TRUE) 
 cat(paste("Bright Segment Length Dependent Score: &",chunk_score1[order(chunk_score1, decreasing=TRUE)[i]],"\\\\\n"), file = outputfile, append=TRUE) 
@@ -277,7 +277,7 @@ cat(paste("Mean of Bright Probes: &",round(bright_gene_means1[order(chunk_score1
 cat(paste("Median of Bright Probes: &",round(bright_gene_medians1[order(chunk_score1, decreasing=TRUE)[i]], digits=2),"\\\\\n"), file = outputfile, append=TRUE)
 cat("\\hline\n\\end{tabular}\n", file = outputfile, append=TRUE)
 
-cat(paste(genes[order(chunk_score1, decreasing=TRUE)[i],], annotations[grep(genes[order(chunk_score1, decreasing=TRUE)[i],],annotations)], mean(temp_matrix[,1]), median(temp_matrix[,1]), chunk_score1[order(chunk_score1, decreasing=TRUE)[i]], bright_probe_fraction1[order(chunk_score1, decreasing=TRUE)[i]], bright_gene_means1[order(chunk_score1, decreasing=TRUE)[i]], bright_gene_medians1[order(chunk_score1, decreasing=TRUE)[i]]), file = outputtable, append=TRUE)
+cat(paste(genes[order(chunk_score1, decreasing=TRUE)[i],], annotations[grep(genes[order(chunk_score1, decreasing=TRUE)[i],],annotations)], mean(temp_matrix[,1]), median(temp_matrix[,1]), chunk_score1[order(chunk_score1, decreasing=TRUE)[i]], bright_probe_fraction1[order(chunk_score1, decreasing=TRUE)[i]], bright_gene_means1[order(chunk_score1, decreasing=TRUE)[i]], bright_gene_medians1[order(chunk_score1, decreasing=TRUE)[i]]), "\n", file = outputtable, append=TRUE)
 	
 cat("\n\\clearpage\n", file = outputfile, append=TRUE)	
 }

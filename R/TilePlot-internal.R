@@ -1,2 +1,2 @@
 `.required` <-
-"R2HTML"
+c("TilePlot", "R2HTML")
