@@ -1,5 +1,5 @@
 `tileplot.single` <-
-function(genesonchip, array1data, annotationslist, cutoff, outputfile, graphdirectory, outputtable, array1name = "Array 1")
+function(genesonchip, array1data, annotationslist, cutoff=-1, cutoff_multiplier=3, outputfile, graphdirectory, outputtable, array1name = "Array 1")
 {
 	
 #The cluster file is the CD-HIT output piped through a python script to make each line a cluster (a list of identifiers)
@@ -11,6 +11,12 @@ genes = read.table(file=genesonchip)
 #The array data file is a simple, two-column file containing the probe identifiers in the first column and the median hybridization intensities in the second column.  Probe identifiers should take the form "geneidentifier-probenumber", and be sorted according to probe number so that they land in the correct 5' to 3' order.
 array1 = read.table(file=array1data)
 #array2 = read.table(file=array2data)
+
+if(cutoff==-1)
+{
+	cutoff=cutoff_multiplier*median(array1[,2])
+}
+cat("Cutoff calculated as",cutoff,"\n")
 
 #These next lines perform a loess normalization of the loess data (i.e. find the polynomial function that best fits the data, straightens it out to a linear relationship with a slope of 1, then adjusts all data points to that slope)
 #array2.loess <- loess(log(y) ~ log(x), span=0.2, degree=2, data.frame(x=array1[,2], y=array2[,2]))
@@ -277,7 +283,7 @@ cat(paste("Mean of Bright Probes: &",round(bright_gene_means1[order(chunk_score1
 cat(paste("Median of Bright Probes: &",round(bright_gene_medians1[order(chunk_score1, decreasing=TRUE)[i]], digits=2),"\\\\\n"), file = outputfile, append=TRUE)
 cat("\\hline\n\\end{tabular}\n", file = outputfile, append=TRUE)
 
-cat(paste(genes[order(chunk_score1, decreasing=TRUE)[i],], annotations[grep(genes[order(chunk_score1, decreasing=TRUE)[i],],annotations)], mean(temp_matrix[,1]), median(temp_matrix[,1]), chunk_score1[order(chunk_score1, decreasing=TRUE)[i]], bright_probe_fraction1[order(chunk_score1, decreasing=TRUE)[i]], bright_gene_means1[order(chunk_score1, decreasing=TRUE)[i]], bright_gene_medians1[order(chunk_score1, decreasing=TRUE)[i]]), "\n", file = outputtable, append=TRUE)
+cat(paste(genes[order(chunk_score1, decreasing=TRUE)[i],], annotations[grep(genes[order(chunk_score1, decreasing=TRUE)[i],],annotations)], mean(temp_matrix[,1]), median(temp_matrix[,1]), chunk_score1[order(chunk_score1, decreasing=TRUE)[i]], bright_probe_fraction1[order(chunk_score1, decreasing=TRUE)[i]], bright_gene_means1[order(chunk_score1, decreasing=TRUE)[i]], bright_gene_medians1[order(chunk_score1, decreasing=TRUE)[i]], sep="\t"), "\n", file = outputtable, append=TRUE)
 	
 cat("\n\\clearpage\n", file = outputfile, append=TRUE)	
 }

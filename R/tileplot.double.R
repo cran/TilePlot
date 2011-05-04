@@ -1,5 +1,5 @@
-`tileplot.multi` <-
-function(genesonchip, array1data, array2data, annotationslist, cutoff, outputfile, graphdirectory, outputtable, array1name = "Array 1", array2name="Array 2")
+`tileplot.double` <-
+function(genesonchip, array1data, array2data, annotationslist, cutoff=-1, cutoff_multiplier=3, outputfile, graphdirectory, outputtable, array1name = "Array 1", array2name="Array 2", loess=TRUE)
 {
 	
 #The cluster file is the CD-HIT output piped through a python script to make each line a cluster (a list of identifiers)
@@ -18,16 +18,26 @@ genes = read.table(file=genesonchip)
 array1 = read.table(file=array1data)
 array2 = read.table(file=array2data)
 
+if(cutoff==-1)
+{
+	cutoff=cutoff_multiplier*median(array1[,2])
+}
+cat("Cutoff calculated as",cutoff,"\n")
+
 #These next lines perform a loess normalization of the loess data (i.e. find the polynomial function that best fits the data, straightens it out to a linear relationship with a slope of 1, then adjusts all data points to that slope)
-#array2.loess <- loess(log(y) ~ log(x), span=0.2, degree=2, data.frame(x=array1[,2], y=array2[,2]))
-#array2.predict <- predict(array2.loess, data.frame(x=array1[,2]))
-#array2.predict.notlog = 2.71828183^array2.predict
-#array2adjusted = (array1[,2]/array2.predict.notlog)*array2[,2]
-
-#array2[,2] <- array2adjusted
-
 setwd(graphdirectory)
-#write.table(array2, file="normalized_array2")
+
+if(loess==TRUE)
+{
+array2.loess <- loess(log(y) ~ log(x), span=0.2, degree=2, data.frame(x=array1[,2], y=array2[,2]))
+array2.predict <- predict(array2.loess, data.frame(x=array1[,2]))
+array2.predict.notlog = 2.71828183^array2.predict
+array2adjusted = (array1[,2]/array2.predict.notlog)*array2[,2]
+array2[,2] <- array2adjusted
+write.table(array2, file="normalized_array2")
+}
+
+
 
 #The annotations file is a list of annotations containing the gene identifier somewhere in each annotation.
 annotations = scan(file=annotationslist, what="list", sep="\n")
@@ -380,6 +390,25 @@ array_comparison_vector = temp_matrix[,2]/temp_matrix[,1]
 median_array_comparison = median(log(array_comparison_vector))
 mad_array_comparison = mad(log(array_comparison_vector))
 
+below_zero = 0
+above_zero = 0
+
+for(t in 1:length(array_comparison_vector))
+{
+	if(log(array_comparison_vector)[t]>0)
+	{
+		above_zero = above_zero + 1
+	}
+	else
+	{
+		below_zero = below_zero + 1
+	}
+}
+
+p_value = binom.test(above_zero,above_zero+below_zero,(0.5))$p.value
+estimated_probability = binom.test(above_zero,above_zero+below_zero,(0.5))$estimate
+upper_CI = binom.test(above_zero,above_zero+below_zero,(0.5))$conf.int[2]
+lower_CI = binom.test(above_zero,above_zero+below_zero,(0.5))$conf.int[1]
 
 postscript(file = paste(graphdirectory,paste(i,".eps",sep=""),sep="/"), width=9, height=5)
 
@@ -449,6 +478,9 @@ cat(paste("Mean of Bright Probes: &",round(bright_gene_means1[order(chunk_score1
 cat(paste("Median of Bright Probes: &",round(bright_gene_medians1[order(chunk_score1, decreasing=TRUE)[i]], digits=2)," & \\textcolor{red}{", round(bright_gene_medians2[order(chunk_score1, decreasing=TRUE)[i]], digits=2), "}\\\\\n\\hline\n"), file = outputfile, append=TRUE)
 cat(paste("Median of ", array2name, " / ", array1name, ": &\\multicolumn{2}{c|}{",round(median_array_comparison, digits=2), "}\\\\\n"), file = outputfile, append=TRUE)
 cat(paste("MAD of ", array2name, " / ", array1name, ": &\\multicolumn{2}{c|}{",round(mad_array_comparison, digits=2), "}\\\\\n"), file = outputfile, append=TRUE)
+cat(paste("P-value Binomial Test of ", array2name, "=", array1name, ": &\\multicolumn{2}{c|}{",p_value, "}\\\\\n"), file = outputfile, append=TRUE)
+cat(paste("Estimated Probability of ", array2name, ">", array1name, ": &\\multicolumn{2}{c|}{",round(lower_CI, digits=3),"<",round(estimated_probability, digits=3),"<",round(upper_CI, digits=3), "}\\\\\n"), file = outputfile, append=TRUE)
+
 cat("\\hline\n\\end{tabular}\n", file = outputfile, append=TRUE)
 #cat("\\end{center}\n\\small\n\\sffamily\nOther genes in this cluster:\\\\\n", file = outputfile, append=TRUE)
 

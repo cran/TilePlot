@@ -3,7 +3,7 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Function for comparing two vectors and performing linear regression}
 \description{
-This function is used internally by tileplot.multi and tileplot.multi.loess to produce scatterplots with linear regression for all probes on the microarray or other whole-microarray vectors of parameters like gene median probe intensity etc.
+This function is used internally by tileplot.double to produce scatterplots with linear regression for all probes on the microarray or other whole-microarray vectors of parameters like gene median probe intensity etc.
 }
 \usage{
 compareplot(arrayset1, arrayset2, array1label, array2label, title)
