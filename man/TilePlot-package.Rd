@@ -11,8 +11,8 @@ Description: This package is intended for processing the output from functional 
 \tabular{ll}{
 Package: \tab TilePlot\cr
 Type: \tab Package\cr
-Version: \tab 1.2.1\cr
-Date: \tab 2011-05-04\cr
+Version: \tab 1.3\cr
+Date: \tab 2011-05-20\cr
 License: \tab GPL-2\cr
 LazyLoad: \tab yes\cr
 }

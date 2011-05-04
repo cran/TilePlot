@@ -6,7 +6,7 @@
 This function is for processing a single functional gene tiling DNA microarray. As input it takes array data, and its output is the hybridization plot for each gene on the array, the mean probe intensity, the median probe intensity, the bright probe fraction, the bright segment length dependent score, the mean bright probe intensity, and the median bright probe intensity. The output is both graphical (as a set of tex and encapsulated-postscript format files that can be assembled using latex) and a tab-delimited text file with rows corresponding to genes and columns corresponding to output parameters.
 }
 \usage{
-tileplot.single(genesonchip, array1data, annotationslist, cutoff, cutoff_multiplier = 3, outputfile, graphdirectory, outputtable, array1name)
+tileplot.single(genesonchip, array1data, annotationslist, cutoff, cutoff_multiplier = 3, outputfile, graphdirectory, outputtable, array1name, smoothing_factor = 6)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,6 +19,7 @@ tileplot.single(genesonchip, array1data, annotationslist, cutoff, cutoff_multipl
   \item{graphdirectory}{A directory for output of plots in encapsulated postscript format.}
   \item{outputtable}{Path leading to desired output filename (a .tdt file for further analysis of statistics for each individual gene).}
   \item{array1name}{Identifier for Array 1 (Default is "Array 1").}
+\item{smoothing_factor}{Smoothing factor for BPF recommendation. The default of 6 is usually OK.}
 }
 \details{
 All probe names must have the following format: geneidentifier-probenumber. \code{array1data} must be sorted so that the probes for each gene are in the correct order (ie from probe 1 to the final probe). This is easily achieved with the unix sort command (sort -n -k2 -t- filename > sorted\_filename). The output file should be processed with LaTeX (http://www.latex-project.org/) to obtain a PDF.

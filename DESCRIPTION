@@ -2,7 +2,7 @@ Package: TilePlot
 Type: Package
 Title: Characterization of functional genes in complex microbial
         communities using tiling DNA microarrays
-Version: 1.2.1
+Version: 1.3
 Date: 2011-05-04
 Author: Ian Marshall
 Maintainer: Ian Marshall <ianpgm@stanford.edu>
@@ -22,6 +22,6 @@ Description: This package is intended for processing the output from
         whether the genes are equally abundant in both arrays.
 License: GPL-2
 LazyLoad: yes
-Packaged: Wed May 4 08:51:39 2011; ianmarshall
+Packaged: 2012-10-29 08:57:46 UTC; ripley
 Repository: CRAN
-Date/Publication: 2011-05-04 16:44:16
+Date/Publication: 2012-10-29 08:57:46

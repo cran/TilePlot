@@ -1,5 +1,5 @@
 `tileplot.double` <-
-function(genesonchip, array1data, array2data, annotationslist, cutoff=-1, cutoff_multiplier=3, outputfile, graphdirectory, outputtable, array1name = "Array 1", array2name="Array 2", loess=TRUE)
+function(genesonchip, array1data, array2data, annotationslist, cutoff=-1, cutoff_multiplier=3, outputfile, graphdirectory, outputtable, array1name = "Array 1", array2name="Array 2", loess=TRUE, smoothing_factor = 6)
 {
 	
 #The cluster file is the CD-HIT output piped through a python script to make each line a cluster (a list of identifiers)
@@ -342,6 +342,31 @@ chunk_number2 = sum(chunk_count_matrix2)
 
 mean_probe_intensity1 = vector()
 mean_probe_intensity2 = vector()
+
+ordered_BPF = bright_probe_fraction1[order(bright_probe_fraction1, decreasing="TRUE")]
+BPF_slopes = vector()
+
+BPF_slopes_identifier = vector()
+
+for(i in 1:length(ordered_BPF))
+{
+	BPF_slopes[i] = ordered_BPF[i] - ordered_BPF[i+smoothing_factor]
+	BPF_slopes_identifier[i] = (ordered_BPF[i] + ordered_BPF[i+smoothing_factor])/2
+	if(i==length(ordered_BPF)-smoothing_factor)
+	{
+		break
+	}
+}
+
+maximum_slope = max(BPF_slopes)
+
+for(i in 1:length(BPF_slopes))
+{
+	if(BPF_slopes[i]==maximum_slope)
+	{
+		cat("Recommended BPF threshold is",BPF_slopes_identifier[i],"based on a slope of",BPF_slopes[i]/smoothing_factor)
+	}
+}
 
 
 #The rest is just data output, first of all plotting all the hybridization patterns and chunk scores to give an idea of the diversity in the sample.
