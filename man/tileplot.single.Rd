@@ -6,8 +6,9 @@
 This function is for processing a single functional gene tiling DNA microarray. As input it takes array data, and its output is the hybridization plot for each gene on the array, the mean probe intensity, the median probe intensity, the bright probe fraction, the bright segment length dependent score, the mean bright probe intensity, and the median bright probe intensity. The output is both graphical (as a set of tex and encapsulated-postscript format files that can be assembled using latex) and a tab-delimited text file with rows corresponding to genes and columns corresponding to output parameters.
 }
 \usage{
-tileplot.single(genesonchip, array1data, annotationslist, cutoff, cutoff_multiplier = 3, outputfile, graphdirectory, outputtable, array1name, smoothing_factor = 6)
-}
+tileplot.single(genesonchip, array1data, annotationslist, cutoff,
+cutoff_multiplier = 3,outputfile, graphdirectory, outputtable,
+array1name, smoothing_factor = 6)}
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{genesonchip}{Path to a text file containing a list of all gene identifiers (I try to use IMG/M identifiers) on the microarray.}
@@ -28,5 +29,9 @@ All probe names must have the following format: geneidentifier-probenumber. \cod
 \author{Ian Marshall}
 \examples{
 #This example code will deposit tex, tdt, and eps output into your R session directory
-tileplot.single(genesonchip=system.file("allgenesonchip.ID", package="TilePlot"),  array1data=system.file("array1", package="TilePlot"),   annotationslist=system.file("all_annotations", package="TilePlot"), outputfile=file.path(tempdir(), "example_output.tex"),  graphdirectory=tempdir(), outputtable=file.path(tempdir(), "example_output.tdt"))
+tileplot.single(genesonchip=system.file("allgenesonchip.ID", package="TilePlot"),
+array1data=system.file("array1", package="TilePlot"),
+annotationslist=system.file("all_annotations", package="TilePlot"),
+outputfile=file.path(tempdir(), "example_output.tex"),
+graphdirectory=tempdir(), outputtable=file.path(tempdir(), "example_output.tdt"))
 }

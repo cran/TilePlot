@@ -5,7 +5,9 @@
 \description{
 This function is for processing a two functional gene tiling DNA microarrays of the same design for the purposes of comparison. As input it takes array data, and its output is the hybridization plot for each gene on the array, the mean probe intensity, the median probe intensity, the bright probe fraction, the bright segment length dependent score, the mean bright probe intensity, and the median bright probe intensity. The data for array2data can be normalized to the array1data using loess - ie an assumption is made that all spots on both arrays should be approximately the same, then all array2data is adjusted to fit that assumption - the modified array2data is given as output in the graphdirectory. The output is both graphical (as a set of tex and encapsulated-postscript format files that can be assembled using latex) and a tab-delimited text file with rows corresponding to genes and columns corresponding to output parameters.}
 \usage{
-tileplot.double(genesonchip, array1data, array2data, annotationslist, cutoff, cutoff_multiplier = 3, outputfile, graphdirectory, outputtable, array1name = "Array 1", array2name = "Array 2", loess = TRUE, smoothing_factor = 6)
+tileplot.double(genesonchip, array1data, array2data, annotationslist, cutoff,
+cutoff_multiplier = 3, outputfile, graphdirectory, outputtable, array1name = "Array 1",
+array2name = "Array 2", loess = TRUE, smoothing_factor = 6)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,5 +32,10 @@ All probe names must have the following format: geneidentifier-probenumber. \cod
 \author{Ian Marshall}
 \examples{
 #This example code will deposit tex, tdt, and eps output into your R session directory
-tileplot.double(genesonchip=system.file("allgenesonchip.ID", package="TilePlot"),  array1data=system.file("array1", package="TilePlot"), array2data=system.file("array2", package="TilePlot"),  annotationslist=system.file("all_annotations", package="TilePlot"), outputfile=file.path(tempdir(), "example_output.tex"),  graphdirectory=tempdir(), outputtable=file.path(tempdir(), "example_output.tdt"))
+tileplot.double(genesonchip=system.file("allgenesonchip.ID", package="TilePlot"),
+array1data=system.file("array1", package="TilePlot"),
+array2data=system.file("array2", package="TilePlot"),
+annotationslist=system.file("all_annotations", package="TilePlot"),
+outputfile=file.path(tempdir(), "example_output.tex"),  graphdirectory=tempdir(),
+outputtable=file.path(tempdir(), "example_output.tdt"))
 }
